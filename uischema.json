@@ -1,0 +1,100 @@
+{
+    "type":"VerticalLayout",
+    "elements": [
+      {
+        "type":"Group",
+        "label":"Personal Details",
+        "elements": [
+          {
+            "type":"Control",
+            "scope":"#/properties/personalDetails/properties/fullName"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/personalDetails/properties/email"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/personalDetails/properties/phone"
+          }
+        ]
+      },
+      {
+        "type": "Group",
+        "label": "Loan Details",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/loanDetails/properties/loanType"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/loanDetails/properties/loanAmount"
+          },
+          {
+            "type":"Control",
+            "scope":"#/properties/loanDetails/properties/interestRate"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/loanDetails/properties/loanDuration"
+          }
+        ]
+      },
+      {
+        "type": "Group",
+        "label": "Income Details",
+        "elements": [
+          {
+            "type": "Control",
+            "scope":"#/properties/incomeDetails/properties/monthlySalary"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/incomeDetails/properties/otherIncome"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/incomeDetails/properties/existingLoans"
+          }
+        ]
+      },
+      {
+        "type": "Group",
+        "label": "Property Details",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/propertyDetails/properties/propertyValue"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/propertyDetails/properties/propertyAddress"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/propertyDetails/properties/propertyType"
+          }
+        ]
+      },
+      {
+        "type": "Group",
+        "label": "Approval Section",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/approvalDetails/properties/creditScore"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/approvalDetails/properties/riskLevel"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/approvalDetails/properties/approvalStatus"
+          }
+        ]
+      }
+    ]
+  }
+  

@@ -1,0 +1,106 @@
+{
+    "type": "object",
+    "properties": {
+      "personalDetails": {
+        "type": "object",
+        "title": "Personal Details",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email Address"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone Number"
+          }
+        }
+      },
+      "loanDetails": {
+        "type": "object",
+        "title": "Loan Details",
+        "properties": {
+          "loanType": {
+            "type": "string",
+            "title": "Loan Type",
+            "enum": ["Home Loan", "Car Loan", "Education Loan", "Personal Loan"]
+          },
+          "loanAmount": {
+            "type": "number",
+            "title": "Loan Amount (in INR)"
+          },
+          "interestRate": {
+            "type": "number",
+            "title": "Interest Rate (%)"
+          },
+          "loanDuration": {
+            "type": "integer",
+            "title": "Loan Duration (in Years)"
+          }
+        }
+      },
+      "incomeDetails": {
+        "type": "object",
+        "title": "Income Details",
+        "properties": {
+          "monthlySalary": {
+            "type": "number",
+            "title": "Monthly Salary (in INR)"
+          },
+          "otherIncome": {
+            "type": "number",
+            "title": "Other Income (in INR)"
+          },
+          "existingLoans": {
+            "type": "number",
+            "title": "Existing Loan Amount (if any)"
+          }
+        }
+      },
+      "propertyDetails": {
+        "type": "object",
+        "title": "Property Details",
+        "properties": {
+          "propertyValue": {
+            "type": "number",
+            "title": "Property Value (in INR)"
+          },
+          "propertyAddress": {
+            "type": "string",
+            "title": "Property Address"
+          },
+          "propertyType": {
+            "type": "string",
+            "title": "Property Type",
+            "enum": ["Flat", "House", "Commercial Property", "Land"]
+          }
+        }
+      },
+      "approvalDetails": {
+        "type": "object",
+        "title": "Approval Section",
+        "properties": {
+          "creditScore": {
+            "type": "number",
+            "title": "Credit Score"
+          },
+          "riskLevel": {
+            "type": "string",
+            "title": "Risk Level",
+            "enum": ["Low", "Medium", "High"]
+          },
+          "approvalStatus": {
+            "type": "string",
+            "title": "Approval Status",
+            "enum": ["Approved", "Rejected", "Pending"]
+          }
+        }
+      }
+    },
+    "required": ["personalDetails", "loanDetails", "incomeDetails"]
+  }
+  
