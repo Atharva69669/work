@@ -1,8 +1,9 @@
-import { Select, MenuItem, FormControl } from '@mui/material';
+import React, { useState } from 'react';
+import { Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // Custom styled Select component to match the simpler dropdown
-const CustomSelect = styled(Select)({
+const StyledSelect = styled(Select)({
   height: '38px',
   borderRadius: '4px',
   border: '1px solid #ccc',
@@ -25,15 +26,24 @@ const CustomSelect = styled(Select)({
   },
 });
 
-// In your component:
-function YourComponent() {
-  const [value, setValue] = React.useState('');
+// TypeScript interface for component props (if needed)
+interface CustomDropDownProps {
+  // Add any props your component needs
+}
+
+// Component with your specified name
+const CustomDropDown: React.FC<CustomDropDownProps> = () => {
+  const [value, setValue] = useState<string>('');
+  
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setValue(event.target.value);
+  };
   
   return (
     <FormControl fullWidth>
-      <CustomSelect
+      <StyledSelect
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={handleChange}
         displayEmpty
       >
         <MenuItem value="" disabled>
@@ -42,7 +52,9 @@ function YourComponent() {
         <MenuItem value="option1">Option 1</MenuItem>
         <MenuItem value="option2">Option 2</MenuItem>
         {/* Add more options as needed */}
-      </CustomSelect>
+      </StyledSelect>
     </FormControl>
   );
-}
+};
+
+export default CustomDropDown;
