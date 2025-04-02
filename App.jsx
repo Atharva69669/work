@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 // Custom styled Select component to match the simpler dropdown
 const StyledSelect = styled(Select)({
@@ -23,15 +24,15 @@ const StyledSelect = styled(Select)({
   },
   '& .MuiSvgIcon-root': {
     right: '8px',
+    color: '#666', // Making the arrow darker to match the image
   },
 });
 
-// TypeScript interface for component props (if needed)
+// TypeScript interface for component props
 interface CustomDropDownProps {
   // Add any props your component needs
 }
 
-// Component with your specified name
 const CustomDropDown: React.FC<CustomDropDownProps> = () => {
   const [value, setValue] = useState<string>('');
   
@@ -45,6 +46,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = () => {
         value={value}
         onChange={handleChange}
         displayEmpty
+        IconComponent={KeyboardArrowDownIcon} // Custom arrow icon
       >
         <MenuItem value="" disabled>
           None
