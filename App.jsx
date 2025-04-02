@@ -1,28 +1,41 @@
-import React from "react";
-import TextField from "@mui/material/TextField";
-import FixedLabelTextField from "./FixedLabelTextField";
+import { Select, MenuItem, FormControl } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-function App() {
+// Create a styled version of the Select
+const LeftAlignedSelect = styled(Select)({
+  '& .MuiSelect-select': {
+    paddingRight: '32px', // Make room for the dropdown icon
+    textAlign: 'left',    // Align text to the left
+  },
+});
+
+// In your component
+function MyComponent() {
+  const [value, setValue] = React.useState('');
+  
   return (
-    <>
-      {/* 
-     label: Outlined (Specifies the floating label text that appears inside the text field, moves up when focused)
-     variant="outlined"
-     Defines the style of the text field.
-     Possible values:
-     outlined → Default, input field with a border.
-     filled → Background-filled field.
-     standard → No border, only underline.
-    */}
-
-
-      {/* <TextField id="outlined-basic" label="Outlined" variant="outlined"/> */}
-
-      <FixedLabelTextField/>
-
-
-    </>
+    <FormControl fullWidth>
+      <LeftAlignedSelect
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        displayEmpty
+        inputProps={{ 'aria-label': 'Without label' }}
+      >
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        <MenuItem value={10}>Ten</MenuItem>
+        <MenuItem value={20}>Twenty</MenuItem>
+        <MenuItem value={30}>Thirty</MenuItem>
+      </LeftAlignedSelect>
+    </FormControl>
   );
 }
 
-export default App;
+const LeftAlignedSelect = styled(Select)({
+  '& .MuiSelect-select': {
+    paddingRight: '32px',
+    textAlign: 'left',
+    minWidth: '120px', // Set a consistent minimum width
+  },
+});
