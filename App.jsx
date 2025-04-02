@@ -1,41 +1,48 @@
-import React, { useState } from 'react';
-import { Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
+import { Select, MenuItem, FormControl } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-// Create a styled version of the Select with TypeScript
-const LeftAlignedSelect = styled(Select)({
+// Custom styled Select component to match the simpler dropdown
+const CustomSelect = styled(Select)({
+  height: '38px',
+  borderRadius: '4px',
+  border: '1px solid #ccc',
+  backgroundColor: 'white',
+  boxShadow: 'none',
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
   '& .MuiSelect-select': {
-    paddingRight: '32px', // Make room for the dropdown icon
-    textAlign: 'left',    // Align text to the left
+    padding: '8px 14px',
+  },
+  '& .MuiSvgIcon-root': {
+    right: '8px',
   },
 });
 
-// In your component
-const MyComponent: React.FC = () => {
-  const [value, setValue] = useState<string>('');
-
-  // Corrected typing for the event handler
-  const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value);
-  };
-
+// In your component:
+function YourComponent() {
+  const [value, setValue] = React.useState('');
+  
   return (
     <FormControl fullWidth>
-      <LeftAlignedSelect
+      <CustomSelect
         value={value}
-        onChange={handleChange}
+        onChange={(e) => setValue(e.target.value)}
         displayEmpty
-        inputProps={{ 'aria-label': 'Without label' }}
       >
-        <MenuItem value="">
-          <em>None</em>
+        <MenuItem value="" disabled>
+          None
         </MenuItem>
-        <MenuItem value="10">Ten</MenuItem>
-        <MenuItem value="20">Twenty</MenuItem>
-        <MenuItem value="30">Thirty</MenuItem>
-      </LeftAlignedSelect>
+        <MenuItem value="option1">Option 1</MenuItem>
+        <MenuItem value="option2">Option 2</MenuItem>
+        {/* Add more options as needed */}
+      </CustomSelect>
     </FormControl>
   );
-};
-
-export default MyComponent;
+}
