@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Select, MenuItem, FormControl } from '@mui/material';
+import { Select, MenuItem, FormControl, SelectChangeEvent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 // Create a styled version of the Select with TypeScript
@@ -13,12 +13,12 @@ const LeftAlignedSelect = styled(Select)({
 // In your component
 const MyComponent: React.FC = () => {
   const [value, setValue] = useState<string>('');
-  
-  // Fixed typing for the event handler
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  // Corrected typing for the event handler
+  const handleChange = (event: SelectChangeEvent) => {
     setValue(event.target.value);
   };
-  
+
   return (
     <FormControl fullWidth>
       <LeftAlignedSelect
