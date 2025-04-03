@@ -1,26 +1,39 @@
-import React from "react";
-import "./input.css";
-import { TextField, FormControl, InputLabel } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Box, TextField } from "@mui/material";
 
-export default function FixedLabelTextField() {
+const StyledLabel = styled("label")({
+  display: "block",
+  fontSize: "13px",
+  fontFamily: "'Frutiger 55 Roman', sans-serif",
+  margin: "0px 0px 6px",
+  color: "#646464",
+  width: "187px", // Fixed width
+  height: "15px", // Fixed height
+});
+
+function FixedLabelTextField({ label, type = "text", placeholder = "", ...props }) {
   return (
-    <FormControl
-      variant="outlined"
-      sx={{
-        position: "relative",
-      }}
-    >
-      <InputLabel
-        shrink={true}
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+      <StyledLabel>{label}</StyledLabel>
+
+        <TextField
+        type={type} // Allows different input types
+        placeholder={placeholder}
+        variant="outlined"
         sx={{
-          position: "absolute",
-          top: 8,
-          fontSize: 16,
+          width: 190,
+          height: 36,
+          backgroundColor: "#ffffff",
+          padding: "1px",
+          "& .MuiOutlinedInput-root": {
+            height: "100%",
+            borderRadius: "0px", 
+          },
         }}
-      >
-        Fixed Label
-      </InputLabel>
-      <TextField variant="outlined" sx={{ mt: 3 }} fullWidth />
-    </FormControl>
+        {...props} 
+      />
+    </Box>
   );
 }
+
+export default FixedLabelTextField;
