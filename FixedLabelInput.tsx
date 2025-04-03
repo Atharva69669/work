@@ -13,17 +13,17 @@ const StyledLabel = styled("label")({
 });
 
 // Define Props Type
-interface FixedLabelInputProps extends TextFieldProps {
+interface FixedLabelTextFieldProps extends TextFieldProps {
   label: string;
 }
 
-const FixedLabelInput: React.FC<FixedLabelInputProps> = ({ label, ...props }) => {
+const FixedLabelTextField: React.FC<FixedLabelTextFieldProps> = ({ label, ...props }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
       {/* Fixed Label */}
       <StyledLabel>{label}</StyledLabel>
 
-      {/* Input Field */}
+      {/* Input Field with Exact 1px Border */}
       <TextField
         variant="outlined"
         sx={{
@@ -34,6 +34,15 @@ const FixedLabelInput: React.FC<FixedLabelInputProps> = ({ label, ...props }) =>
           "& .MuiOutlinedInput-root": {
             height: "100%",
             borderRadius: "0px", // No border-radius
+            "& fieldset": {
+              border: "1px solid #646464", // Exact border override
+            },
+            "&:hover fieldset": {
+              border: "1px solid #646464", // Keeps same on hover
+            },
+            "&.Mui-focused fieldset": {
+              border: "1px solid #646464", // Keeps same on focus
+            },
           },
         }}
         {...props} // Pass all input-related props
@@ -42,4 +51,4 @@ const FixedLabelInput: React.FC<FixedLabelInputProps> = ({ label, ...props }) =>
   );
 };
 
-export default FixedLabelInput;
+export default FixedLabelTextField;
