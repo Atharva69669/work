@@ -75,3 +75,11 @@ export default CustomTextArea;
   value={textValue} 
   onChange={(e) => setTextValue(e.target.value)} 
 />
+
+<TextField
+      label="Enter your text"
+      multiline
+      rows={4}
+      variant="outlined"
+      fullWidth
+    />
