@@ -1,0 +1,69 @@
+import React from "react";
+import TextField from "@mui/material/TextField";
+import { styled } from "@mui/material/styles";
+
+interface CustomTextAreaProps {
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const StyledLabel = styled("label")({
+  fontSize: "13px",
+  fontFamily: "'Frutiger 55 Roman', sans-serif",
+  color: "#646464",
+  marginBottom: "6px",
+  display: "block",
+});
+
+const TextAreaContainer = styled("div")({
+  width: "250px",
+});
+
+const StyledTextField = styled(TextField)({
+  width: "250px",
+  height: "144px",
+  "& .MuiOutlinedInput-root": {
+    paddingTop: "8px",
+    height: "144px",
+    borderRadius: "0px",
+    border: "1px solid #646464",
+  },
+  "& .MuiOutlinedInput-input": {
+    height: "100% !important",
+  },
+  "& .MuiOutlinedInput-notchedOutline": {
+    border: "none",
+  },
+  "&:hover .MuiOutlinedInput-root": {
+    border: "1px solid #2196F3",
+  },
+  "&.Mui-focused .MuiOutlinedInput-root": {
+    border: "1px solid #1976D2",
+  },
+});
+
+const CustomTextArea: React.FC<CustomTextAreaProps> = ({
+  label = "Enter your text",
+  placeholder = "Type here...",
+  value,
+  onChange,
+}) => {
+  return (
+    <TextAreaContainer>
+      {label && <StyledLabel>{label}</StyledLabel>}
+      <StyledTextField
+        multiline
+        rows={4}
+        variant="outlined"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        InputLabelProps={{ shrink: true }}
+      />
+    </TextAreaContainer>
+  );
+};
+
+export default CustomTextArea;
