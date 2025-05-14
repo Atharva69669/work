@@ -221,4 +221,70 @@ export default function CustomCalendar(): JSX.Element {
             size="small"
             disabled
           />
-          <StyledLabel>To
+          <StyledLabel>To</StyledLabel>
+          <StyledTextField
+            value={range.endDate.format("MM/DD/YYYY")}
+            size="small"
+            disabled
+          />
+        </>
+      );
+    }
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Container>
+        <Sidebar>
+          <List dense disablePadding>
+            {Object.entries(presetOptions).map(([key, { label }]) => (
+              <ListItemButton
+                key={key}
+                selected={selectedOption === key}
+                onClick={() => handleOptionClick(key as PresetKey)}
+                sx={{
+                  px: 2,
+                  height: 48,
+                  "& .MuiListItemText-primary": { fontSize: "13px" },
+                  "&.Mui-selected": { backgroundColor: "#d0e0ff" },
+                }}
+              >
+                <ListItemText primary={label} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Sidebar>
+
+        <Main>
+          <Box>
+            {renderFields()}
+            <StaticDatePicker
+              displayStaticWrapperAs="desktop"
+              value={null}
+              onChange={handleDateClick}
+              slotProps={{
+                day: {
+                  selected: (day: Dayjs) =>
+                    selectedOption === "customDates" &&
+                    customDates.some((d) => d.isSame(day, "day")),
+                },
+              }}
+            />
+          </Box>
+
+          <Footer>
+            <Button
+              variant="outlined"
+              onClick={() => handleOptionClick("customDates")}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleApply}>
+              Apply
+            </Button>
+          </Footer>
+        </Main>
+      </Container>
+    </LocalizationProvider>
+  );
+}
