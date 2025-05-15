@@ -8,6 +8,7 @@ import {
   ListItemButton,
   ListItemText,
   Button,
+  Divider,
 } from "@mui/material";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -19,8 +20,8 @@ import dayjs from "dayjs";
 
 const Container = styled(Paper)({
   display: "flex",
-  width: 500,
-  height: 600,
+  width: 520,
+  height: 562,
   overflow: "hidden",
   border: "1px solid #ccc",
 });
@@ -33,6 +34,7 @@ const Sidebar = styled(Box)({
 
 const Main = styled(Box)({
   flex: 1,
+  width: 344,
   padding: "20px",
   display: "flex",
   flexDirection: "column",
@@ -49,6 +51,7 @@ const Footer = styled(Box)({
 const StyledTextField = styled(TextField)({
   width: 276,
   height: 36,
+  marginBottom: 10,
   "& .MuiInputBase-root": {
     height: 36,
     padding: "1px 12px",
@@ -76,19 +79,16 @@ function getPresets() {
   const startOfMonth = new Date(currentYear, currentMonth, 1);
   const startOfLastMonth = new Date(currentYear, currentMonth - 1, 1);
   const endOfLastMonth = new Date(currentYear, currentMonth, 0);
-  const startOfQuarter = new Date(currentYear, Math.floor(currentMonth / 3) * 3, 1);
+  const startOfQuarter = new Date(
+    currentYear,
+    Math.floor(currentMonth / 3) * 3,
+    1
+  );
   const startOfYear = new Date(currentYear, 0, 1);
   const startOfLastYear = new Date(currentYear - 1, 0, 1);
   const endOfLastYear = new Date(currentYear - 1, 11, 31);
 
   return {
-    today: {
-      label: "Today",
-      range: {
-        startDate: dayjs(today),
-        endDate: dayjs(today),
-      },
-    },
     thisMonth: {
       label: "This Month",
       range: {
@@ -199,13 +199,11 @@ export default function CustomCalendar() {
           <StyledTextField
             value={range.startDate.format("MM/DD/YYYY")}
             size="small"
-            disabled
           />
           <StyledLabel>To</StyledLabel>
           <StyledTextField
             value={range.endDate.format("MM/DD/YYYY")}
             size="small"
-            disabled
           />
         </>
       );
@@ -225,8 +223,8 @@ export default function CustomCalendar() {
                 sx={{
                   px: 2,
                   height: 48,
-                  "& .MuiListItemText-primary": { fontSize: "13px" },
-                  "&.Mui-selected": { backgroundColor: "#d0e0ff" },
+                  "& .MuiListItemText-primary": { fontSize: "15px" },
+                  "&.Mui-selected": { backgroundColor: "#d3eaf3" },
                 }}
               >
                 <ListItemText primary={label} />
@@ -242,24 +240,66 @@ export default function CustomCalendar() {
               displayStaticWrapperAs="desktop"
               value={null}
               onChange={handleDateClick}
+              sx={{ width: 318, height: 300, p: 0 }}
               slotProps={{
                 day: {
-                  selected: (day) =>
-                    selectedOption === "customDates" &&
-                    customDates.some((d) => d.isSame(day, "day")),
+                  sx: {
+                    width: 36,
+                    height: 36,
+                    fontSize: 14,
+                    // Add your custom highlight color via &.Mui-selected below
+                  },
+                  selected: (day) => {
+                    if (selectedOption === "customDates") {
+                      return customDates.some((d) => d.isSame(day, "day"));
+                    } else {
+                      // Highlight if day is within the preset range
+                      return (
+                        day.isSame(range.startDate, "day") ||
+                        day.isSame(range.endDate, "day") ||
+                        (day.isAfter(range.startDate, "day") &&
+                          day.isBefore(range.endDate, "day"))
+                      );
+                    }
+                  },
+                },
+                daysHeader: {
+                  sx: {
+                    height: 55,
+                    minHeight: 55,
+                    maxHeight: 55,
+                    width: 267,
+                    "& .MuiTypography-root": {
+                      fontSize: 14,
+                    },
+                  },
                 },
               }}
             />
+
+            <Box mt={2}>
+              <Divider />
+            </Box>
           </Box>
 
           <Footer>
             <Button
-              variant="outlined"
+              variant="contained"
               onClick={() => handleOptionClick("customDates")}
+              sx={{ borderRadius: "none", width: 84, height: 36 ,backgroundColor:"#ffeabd",color:"#1c1c1c"}}
             >
               Cancel
             </Button>
-            <Button variant="contained" onClick={handleApply}>
+            <Button
+              variant="contained"
+              onClick={handleApply}
+              sx={{
+                borderRadius: "none",
+                width: 84,
+                height: 36,
+                backgroundColor: "#1c1c1c",
+              }}
+            >
               Apply
             </Button>
           </Footer>
