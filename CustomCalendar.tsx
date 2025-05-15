@@ -8,6 +8,7 @@ import {
   ListItemButton,
   ListItemText,
   Button,
+  Divider,
 } from "@mui/material";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -15,32 +16,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { styled } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
 
-// ──────────── Types ────────────
-type PresetKey =
-  | "today"
-  | "thisMonth"
-  | "lastMonth"
-  | "quarterToDate"
-  | "yearToDate"
-  | "lastYear"
-  | "customDates";
-
-type Preset = {
-  label: string;
-  range?: {
-    startDate: Dayjs;
-    endDate: Dayjs;
-  };
-};
-
-type Presets = Record<PresetKey, Preset>;
-
 // ──────────── Styled Components ────────────
 
 const Container = styled(Paper)({
   display: "flex",
-  width: 500,
-  height: 600,
+  width: 520,
+  height: 562,
   overflow: "hidden",
   border: "1px solid #ccc",
 });
@@ -53,6 +34,7 @@ const Sidebar = styled(Box)({
 
 const Main = styled(Box)({
   flex: 1,
+  width: 344,
   padding: "20px",
   display: "flex",
   flexDirection: "column",
@@ -69,6 +51,7 @@ const Footer = styled(Box)({
 const StyledTextField = styled(TextField)({
   width: 276,
   height: 36,
+  marginBottom: 10,
   "& .MuiInputBase-root": {
     height: 36,
     padding: "1px 12px",
@@ -86,9 +69,23 @@ const StyledLabel = styled("label")({
   color: "#646464",
 });
 
+// ──────────── Types ────────────
+
+interface DateRange {
+  startDate: Dayjs;
+  endDate: Dayjs;
+}
+
+interface PresetOption {
+  label: string;
+  range?: DateRange;
+}
+
+type PresetOptions = Record<string, PresetOption>;
+
 // ──────────── Presets using Native JS Dates ────────────
 
-function getPresets(): Presets {
+function getPresets(): PresetOptions {
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth();
@@ -96,19 +93,16 @@ function getPresets(): Presets {
   const startOfMonth = new Date(currentYear, currentMonth, 1);
   const startOfLastMonth = new Date(currentYear, currentMonth - 1, 1);
   const endOfLastMonth = new Date(currentYear, currentMonth, 0);
-  const startOfQuarter = new Date(currentYear, Math.floor(currentMonth / 3) * 3, 1);
+  const startOfQuarter = new Date(
+    currentYear,
+    Math.floor(currentMonth / 3) * 3,
+    1
+  );
   const startOfYear = new Date(currentYear, 0, 1);
   const startOfLastYear = new Date(currentYear - 1, 0, 1);
   const endOfLastYear = new Date(currentYear - 1, 11, 31);
 
   return {
-    today: {
-      label: "Today",
-      range: {
-        startDate: dayjs(today),
-        endDate: dayjs(today),
-      },
-    },
     thisMonth: {
       label: "This Month",
       range: {
@@ -152,25 +146,28 @@ function getPresets(): Presets {
 
 // ──────────── Main Component ────────────
 
-export default function CustomCalendar(): JSX.Element {
+export default function CustomCalendar() {
   const presetOptions = getPresets();
-  const [selectedOption, setSelectedOption] = useState<PresetKey>("customDates");
-  const [range, setRange] = useState<{ startDate: Dayjs; endDate: Dayjs }>({
+
+  const [selectedOption, setSelectedOption] = useState<keyof PresetOptions>(
+    "customDates"
+  );
+  const [range, setRange] = useState<DateRange>({
     startDate: dayjs(),
     endDate: dayjs(),
   });
   const [customDates, setCustomDates] = useState<Dayjs[]>([]);
 
-  const handleOptionClick = (key: PresetKey): void => {
+  const handleOptionClick = (key: keyof PresetOptions) => {
     setSelectedOption(key);
     if (presetOptions[key].range) {
-      setRange(presetOptions[key].range!);
+      setRange(presetOptions[key].range as DateRange);
     } else {
       setCustomDates([]);
     }
   };
 
-  const handleDateClick = (date: Dayjs | null): void => {
+  const handleDateClick = (date: Dayjs | null) => {
     if (!date || selectedOption !== "customDates") return;
 
     const exists = customDates.some((d) => d.isSame(date, "day"));
@@ -181,7 +178,7 @@ export default function CustomCalendar(): JSX.Element {
     }
   };
 
-  const handleApply = (): void => {
+  const handleApply = () => {
     if (selectedOption === "customDates") {
       console.log(
         "Selected Dates:",
@@ -219,13 +216,17 @@ export default function CustomCalendar(): JSX.Element {
           <StyledTextField
             value={range.startDate.format("MM/DD/YYYY")}
             size="small"
-            disabled
+            InputProps={{
+              readOnly: true,
+            }}
           />
           <StyledLabel>To</StyledLabel>
           <StyledTextField
             value={range.endDate.format("MM/DD/YYYY")}
             size="small"
-            disabled
+            InputProps={{
+              readOnly: true,
+            }}
           />
         </>
       );
@@ -241,12 +242,12 @@ export default function CustomCalendar(): JSX.Element {
               <ListItemButton
                 key={key}
                 selected={selectedOption === key}
-                onClick={() => handleOptionClick(key as PresetKey)}
+                onClick={() => handleOptionClick(key as keyof PresetOptions)}
                 sx={{
                   px: 2,
                   height: 48,
-                  "& .MuiListItemText-primary": { fontSize: "13px" },
-                  "&.Mui-selected": { backgroundColor: "#d0e0ff" },
+                  "& .MuiListItemText-primary": { fontSize: "15px" },
+                  "&.Mui-selected": { backgroundColor: "#d3eaf3" },
                 }}
               >
                 <ListItemText primary={label} />
@@ -262,24 +263,71 @@ export default function CustomCalendar(): JSX.Element {
               displayStaticWrapperAs="desktop"
               value={null}
               onChange={handleDateClick}
+              sx={{ width: 318, height: 300, p: 0 }}
               slotProps={{
                 day: {
-                  selected: (day: Dayjs) =>
-                    selectedOption === "customDates" &&
-                    customDates.some((d) => d.isSame(day, "day")),
+                  sx: {
+                    width: 36,
+                    height: 36,
+                    fontSize: 14,
+                    // Custom highlight color via &.Mui-selected handled below
+                  },
+                  selected: (day: Dayjs) => {
+                    if (selectedOption === "customDates") {
+                      return customDates.some((d) => d.isSame(day, "day"));
+                    } else {
+                      return (
+                        day.isSame(range.startDate, "day") ||
+                        day.isSame(range.endDate, "day") ||
+                        (day.isAfter(range.startDate, "day") &&
+                          day.isBefore(range.endDate, "day"))
+                      );
+                    }
+                  },
+                },
+                daysHeader: {
+                  sx: {
+                    height: 55,
+                    minHeight: 55,
+                    maxHeight: 55,
+                    width: 267,
+                    "& .MuiTypography-root": {
+                      fontSize: 14,
+                    },
+                  },
                 },
               }}
             />
+
+            <Box mt={2}>
+              <Divider />
+            </Box>
           </Box>
 
           <Footer>
             <Button
-              variant="outlined"
+              variant="contained"
               onClick={() => handleOptionClick("customDates")}
+              sx={{
+                borderRadius: "none",
+                width: 84,
+                height: 36,
+                backgroundColor: "#ffeabd",
+                color: "#1c1c1c",
+              }}
             >
               Cancel
             </Button>
-            <Button variant="contained" onClick={handleApply}>
+            <Button
+              variant="contained"
+              onClick={handleApply}
+              sx={{
+                borderRadius: "none",
+                width: 84,
+                height: 36,
+                backgroundColor: "#1c1c1c",
+              }}
+            >
               Apply
             </Button>
           </Footer>
