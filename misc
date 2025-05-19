@@ -1,0 +1,19 @@
+import * as React from 'react';
+import RadioGroup from '@mui/material/RadioGroup';
+import CustomRadio from './CustomRadio';
+
+const RadioGroupExample: React.FC = () => {
+  const [selectedValue, setSelectedValue] = React.useState('option1');
+
+  return (
+    <RadioGroup
+      value={selectedValue}
+      onChange={(e) => setSelectedValue(e.target.value)}
+    >
+      <CustomRadio label="Option 1" value="option1" />
+      <CustomRadio label="Option 2" value="option2" />
+    </RadioGroup>
+  );
+};
+
+export default RadioGroupExample;
