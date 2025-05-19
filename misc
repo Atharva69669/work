@@ -17,3 +17,20 @@ const RadioGroupExample: React.FC = () => {
 };
 
 export default RadioGroupExample;
+
+
+const [checked, setChecked] = useState(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
+  return (
+    <div style={{ padding: 16 }}>
+      <CustomCheckbox
+        label="I agree to the terms and conditions"
+        checked={checked}
+        onChange={handleChange}
+      />
+    </div>
+  );
