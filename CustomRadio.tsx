@@ -11,34 +11,30 @@ type CustomRadioProps = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-// Outer circle (unselected)
-const CustomIcon = (
-  <SvgIcon sx={{ fontSize: 24 }}>
-    <circle cx="12" cy="12" r="11" stroke="#1c1c1c" strokeWidth="2" fill="none" />
+const ICON_SIZE = 24;
+const OUTER_RADIUS = 11;
+const INNER_RADIUS = 7;
+const STROKE_COLOR = '#1c1c1c';
+const FILL_COLOR = '#1c1c1c';
+
+const getRadioIcon = (checked: boolean) => (
+  <SvgIcon sx={{ fontSize: ICON_SIZE }}>
+    <circle cx="12" cy="12" r={OUTER_RADIUS} stroke={STROKE_COLOR} strokeWidth="2" fill="none" />
+    {checked && <circle cx="12" cy="12" r={INNER_RADIUS} fill={FILL_COLOR} />}
   </SvgIcon>
 );
 
-// Outer circle + inner 14px circle (selected)
-const CustomCheckedIcon = (
-  <SvgIcon sx={{ fontSize: 24 }}>
-    <circle cx="12" cy="12" r="11" stroke="#1c1c1c" strokeWidth="2" fill="none" />
-    <circle cx="12" cy="12" r="7" fill="#1c1c1c" />
-  </SvgIcon>
-);
-
-// Styled radio with no ripple and no hover shadow
-const StyledRadio = styled(Radio)(() => ({
+const StyledRadio = styled(Radio)({
   padding: 4,
   '&:hover': {
     backgroundColor: 'transparent',
-    boxShadow: 'none',
   },
   '& .MuiTouchRipple-root': {
     display: 'none',
   },
-}));
+});
 
-const CustomRadio: React.FC<CustomRadioProps> = ({ label, value, checked, onChange }) => {
+const CustomRadio: React.FC<CustomRadioProps> = ({ label, value, checked = false, onChange }) => {
   return (
     <FormControlLabel
       value={value}
@@ -46,8 +42,8 @@ const CustomRadio: React.FC<CustomRadioProps> = ({ label, value, checked, onChan
         <StyledRadio
           checked={checked}
           onChange={onChange}
-          icon={CustomIcon}
-          checkedIcon={CustomCheckedIcon}
+          icon={getRadioIcon(false)}
+          checkedIcon={getRadioIcon(true)}
           disableRipple
         />
       }
