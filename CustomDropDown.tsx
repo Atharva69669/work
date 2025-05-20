@@ -37,7 +37,7 @@ const StyledFormControl = styled(FormControl)<{ width?: string | number }>(({ wi
   backgroundColor: "white",
 }));
 
-const StyledSelect = styled(Select)({
+const StyledSelect = styled(Select)(() => ({
   height: "36px",
   fontSize: "15px",
   fontFamily: "'Frutiger 55 Roman', sans-serif",
@@ -55,10 +55,10 @@ const StyledSelect = styled(Select)({
   "&:hover, &.Mui-focused": {
     backgroundColor: "white",
   },
-});
+}));
 
-const StyledMenuItem = styled(MenuItem)({
-  height: "48px",
+const StyledMenuItem = styled(MenuItem)(() => ({
+  height: "50px", // Set height of each item
   fontSize: "15px",
   fontFamily: "'Frutiger 55 Roman', sans-serif",
   display: "flex",
@@ -70,7 +70,7 @@ const StyledMenuItem = styled(MenuItem)({
   "&:hover": {
     backgroundColor: "rgba(200, 200, 200, 0.5)",
   },
-});
+}));
 
 const CustomDropDown: React.FC<CustomDropDownProps> = ({
   label = "Select Option",
@@ -95,7 +95,7 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
             PaperProps: {
               style: {
                 borderRadius: 0,
-                width: "100%",
+                width: typeof width === 'number' ? `${width}px` : width, // Ensure menu matches dropdown width
               },
             },
           }}
