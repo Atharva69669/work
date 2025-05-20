@@ -7,6 +7,7 @@ interface CustomTextAreaProps {
   placeholder?: string;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  width?: string | number; // new prop for flexibility
 }
 
 const StyledLabel = styled("label")({
@@ -17,30 +18,33 @@ const StyledLabel = styled("label")({
   display: "block",
 });
 
-const TextAreaContainer = styled("div")({
-  width: "250px",
-});
+const TextAreaContainer = styled("div")<{
+  width?: string | number;
+}>(({ width }) => ({
+  width: width ?? "100%",
+}));
 
 const StyledTextField = styled(TextField)({
-  width: "250px",
-  height: "144px",
+  width: "100%",
   "& .MuiOutlinedInput-root": {
     paddingTop: "8px",
-    height: "144px",
-    borderRadius: "0px",
+    borderRadius: 0,
     border: "1px solid #646464",
+    alignItems: "flex-start", // fix vertical alignment
   },
   "& .MuiOutlinedInput-input": {
-    height: "100% !important",
+    padding: "10px",
+    fontFamily: "'Frutiger 55 Roman', sans-serif",
+    height: "auto",
   },
   "& .MuiOutlinedInput-notchedOutline": {
     border: "none",
   },
   "&:hover .MuiOutlinedInput-root": {
-    border: "1px solid #2196F3",
+    borderColor: "#2196F3",
   },
   "&.Mui-focused .MuiOutlinedInput-root": {
-    border: "1px solid #1976D2",
+    borderColor: "#1976D2",
   },
 });
 
@@ -49,13 +53,14 @@ const CustomTextArea: React.FC<CustomTextAreaProps> = ({
   placeholder = "Type here...",
   value,
   onChange,
+  width,
 }) => {
   return (
-    <TextAreaContainer>
+    <TextAreaContainer width={width}>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledTextField
         multiline
-        rows={4}
+        minRows={4}
         variant="outlined"
         placeholder={placeholder}
         value={value}
@@ -67,19 +72,3 @@ const CustomTextArea: React.FC<CustomTextAreaProps> = ({
 };
 
 export default CustomTextArea;
-
-
-<CustomTextArea 
-  label="Description" 
-  placeholder="Enter your notes..." 
-  value={textValue} 
-  onChange={(e) => setTextValue(e.target.value)} 
-/>
-
-<TextField
-      label="Enter your text"
-      multiline
-      rows={4}
-      variant="outlined"
-      fullWidth
-    />
