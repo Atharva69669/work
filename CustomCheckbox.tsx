@@ -11,68 +11,33 @@ interface CustomCheckboxProps {
   disabled?: boolean;
 }
 
-const boxSize = 24;
-const borderColor = '#1c1c1c';
-const tickColor = '#1c1c1c';
+const BOX_SIZE = 24;
+const BORDER_COLOR = '#1c1c1c';
+const TICK_COLOR = '#1c1c1c';
+const DISABLED_FILL = '#f5f5f5';
+const DISABLED_STROKE = '#bdbdbd';
 
-// Unchecked icon
-const CustomIcon = (
-  <SvgIcon sx={{ fontSize: boxSize }}>
+const getCheckboxIcon = (type: 'unchecked' | 'checked' | 'disabled') => (
+  <SvgIcon sx={{ fontSize: BOX_SIZE }}>
     <rect
-      x="0"
-      y="0"
       width="24"
       height="24"
-      fill="none"
-      stroke={borderColor}
+      fill={type === 'disabled' ? DISABLED_FILL : 'none'}
+      stroke={type === 'disabled' ? DISABLED_STROKE : BORDER_COLOR}
       strokeWidth="1"
-      rx="0"
-      ry="0"
     />
+    {type === 'checked' && (
+      <polyline
+        points="5,12 10,17 19,6"
+        fill="none"
+        stroke={TICK_COLOR}
+        strokeWidth="2"
+      />
+    )}
   </SvgIcon>
 );
 
-// Checked icon
-const CustomCheckedIcon = (
-  <SvgIcon sx={{ fontSize: boxSize }}>
-    <rect
-      x="0"
-      y="0"
-      width="24"
-      height="24"
-      fill="none"
-      stroke={borderColor}
-      strokeWidth="1"
-      rx="0"
-      ry="0"
-    />
-    <polyline
-      points="5,12 10,17 19,6"
-      fill="none"
-      stroke={tickColor}
-      strokeWidth="2"
-    />
-  </SvgIcon>
-);
-
-// Disabled icon
-const CustomDisabledIcon = (
-  <SvgIcon sx={{ fontSize: boxSize }}>
-    <rect
-      x="0"
-      y="0"
-      width="24"
-      height="24"
-      fill="#f5f5f5"
-      stroke="#bdbdbd"
-      strokeWidth="1"
-      rx="0"
-      ry="0"
-    />
-  </SvgIcon>
-);
-
-const StyledCheckbox = styled(Checkbox)(() => ({
+const StyledCheckbox = styled(Checkbox)({
   padding: 4,
   '&:hover': {
     backgroundColor: 'transparent',
@@ -80,7 +45,7 @@ const StyledCheckbox = styled(Checkbox)(() => ({
   '& .MuiTouchRipple-root': {
     display: 'none',
   },
-}));
+});
 
 const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
   label,
@@ -88,14 +53,17 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
   onChange,
   disabled = false,
 }) => {
+  const iconType = disabled ? 'disabled' : 'unchecked';
+  const checkedIconType = disabled ? 'disabled' : 'checked';
+
   return (
     <FormControlLabel
       control={
         <StyledCheckbox
           checked={checked}
           onChange={onChange}
-          icon={disabled ? CustomDisabledIcon : CustomIcon}
-          checkedIcon={disabled ? CustomDisabledIcon : CustomCheckedIcon}
+          icon={getCheckboxIcon(iconType)}
+          checkedIcon={getCheckboxIcon(checkedIconType)}
           disableRipple
           disabled={disabled}
         />
