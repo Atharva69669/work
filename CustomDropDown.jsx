@@ -1,13 +1,27 @@
 import React from "react";
-import { Select, MenuItem, FormControl } from "@mui/material";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  SelectChangeEvent,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
-const StyledFormControl = styled(FormControl)({
-  width: "250px",
-  borderRadius: "0px",
-  backgroundColor: "white",
-});
+type Option = {
+  label: string;
+  value: string | number;
+};
+
+type CustomDropDownProps = {
+  label?: string;
+  options: Option[];
+  value: string | number;
+  onChange: (event: SelectChangeEvent) => void;
+  disabled?: boolean;
+  style?: React.CSSProperties;
+  width?: string | number;
+};
 
 const StyledLabel = styled("label")({
   display: "block",
@@ -17,13 +31,18 @@ const StyledLabel = styled("label")({
   color: "#646464",
 });
 
+const StyledFormControl = styled(FormControl)<{ width?: string | number }>(({ width = "250px" }) => ({
+  width,
+  borderRadius: 0,
+  backgroundColor: "white",
+}));
+
 const StyledSelect = styled(Select)({
   height: "36px",
-  width: "100%",
-  border: "1px solid #646464",
   fontSize: "15px",
   fontFamily: "'Frutiger 55 Roman', sans-serif",
-  borderRadius: "0px",
+  border: "1px solid #646464",
+  borderRadius: 0,
   "& .MuiSelect-select": {
     padding: "8px 14px",
     height: "36px",
@@ -40,10 +59,10 @@ const StyledSelect = styled(Select)({
 
 const StyledMenuItem = styled(MenuItem)({
   height: "48px",
-  display: "flex",
-  alignItems: "center",
   fontSize: "15px",
   fontFamily: "'Frutiger 55 Roman', sans-serif",
+  display: "flex",
+  alignItems: "center",
   transition: "background-color 0.2s",
   "&.Mui-selected": {
     backgroundColor: "rgba(33, 150, 243, 0.2) !important",
@@ -53,35 +72,33 @@ const StyledMenuItem = styled(MenuItem)({
   },
 });
 
-const menuProps = {
-  PaperProps: {
-    style: {
-      borderRadius: "0px",
-      width: "250px",
-      transform: "translateX(-7px)",
-    },
-  },
-};
-
-const CustomDropDown = ({
+const CustomDropDown: React.FC<CustomDropDownProps> = ({
   label = "Select Option",
-  options = [],
+  options,
   value,
   onChange,
   disabled = false,
   style = {},
+  width = "250px",
 }) => {
   return (
     <div style={{ margin: "10px", ...style }}>
       <StyledLabel>{label}</StyledLabel>
-      <StyledFormControl>
+      <StyledFormControl width={width}>
         <StyledSelect
           value={value}
           onChange={onChange}
           displayEmpty
-          MenuProps={menuProps}
-          IconComponent={KeyboardArrowDownOutlinedIcon}
           disabled={disabled}
+          IconComponent={KeyboardArrowDownOutlinedIcon}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                borderRadius: 0,
+                width: "100%",
+              },
+            },
+          }}
         >
           <StyledMenuItem value="" disabled>
             None
