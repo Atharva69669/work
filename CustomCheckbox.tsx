@@ -17,13 +17,12 @@ const TICK_COLOR = '#1c1c1c';
 const DISABLED_FILL = '#f5f5f5';
 const DISABLED_STROKE = '#bdbdbd';
 
-// Generates the icon for each state
 const getCheckboxIcon = (type: 'unchecked' | 'checked' | 'disabled') => (
   <SvgIcon sx={{ fontSize: BOX_SIZE }}>
     <rect
       width="24"
       height="24"
-      fill={type === 'disabled' ? DISABLED_FILL : '#ffffff'} // White background when not disabled
+      fill={type === 'disabled' ? DISABLED_FILL : '#ffffff'} // White background
       stroke={type === 'disabled' ? DISABLED_STROKE : BORDER_COLOR}
       strokeWidth="1"
     />
@@ -38,15 +37,26 @@ const getCheckboxIcon = (type: 'unchecked' | 'checked' | 'disabled') => (
   </SvgIcon>
 );
 
-const StyledCheckbox = styled(Checkbox)({
+// Override all background styling to keep it white
+const StyledCheckbox = styled(Checkbox)(() => ({
   padding: 4,
+  backgroundColor: '#fff',
   '&:hover': {
-    backgroundColor: 'transparent',
+    backgroundColor: '#fff', // ensure hover does not override
+  },
+  '&.Mui-checked': {
+    backgroundColor: '#fff',
+  },
+  '&.Mui-disabled': {
+    backgroundColor: DISABLED_FILL,
+  },
+  '& .MuiSvgIcon-root': {
+    backgroundColor: '#fff',
   },
   '& .MuiTouchRipple-root': {
     display: 'none',
   },
-});
+}));
 
 const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
   label,
