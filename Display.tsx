@@ -1,53 +1,113 @@
-import React from "react";
-import CustomDropDown from "./CustomDropDown"; // Your custom dropdown component
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import CustomCheckbox from "./CustomCheckbox";
+import CustomRadio from "./CustomRadio";
+import CustomDropDown from "./CustomDropDown";
+import CustomTextArea from "./CustomTextArea";
+import FixedLabelTextField from "./FixedLabelTextField";
+import { SelectChangeEvent } from "@mui/material";
 
-export const Display: React.FC = () => {
-  const [customValue, setCustomValue] = React.useState("");
-  const [broadridgeValue, setBroadridgeValue] = React.useState("");
+const Display: React.FC = () => {
+  const [isChecked, setIsChecked] = useState(false);
+  const [selectedRadio, setSelectedRadio] = useState("option1");
+  const [dropdownValue, setDropdownValue] = useState("");
+  const [textValue, setTextValue] = useState("");
+  const [textFieldValue, setTextFieldValue] = useState("");
 
-  const options = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-  ];
+  const handleDropdownChange = (event: SelectChangeEvent) => {
+    setDropdownValue(event.target.value);
+  };
+
+  const handleTextAreaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTextValue(event.target.value);
+  };
+
+  const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTextFieldValue(event.target.value);
+  };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
-      <h2 style={{ textAlign: "center" }}>Component Comparison</h2>
+    <Box sx={{ padding: 4, maxWidth: "600px", margin: "auto" }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Custom Components Showcase
+      </Typography>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "40px" }}>
-        {/* Left: Custom Dropdown */}
-        <div style={{ flex: 1 }}>
-          <h3 style={{ textAlign: "center" }}>Custom Dropdown</h3>
-          <CustomDropDown
-            label="Custom Dropdown"
-            options={options}
-            value={customValue}
-            onChange={(e) => setCustomValue(e.target.value)}
-          />
-        </div>
+      {/* Custom Checkbox */}
+      <Box sx={{ marginBottom: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Custom Checkbox
+        </Typography>
+        <CustomCheckbox
+          label="Accept Terms and Conditions"
+          checked={isChecked}
+          onChange={(e, checked) => setIsChecked(checked)}
+        />
+      </Box>
 
-        {/* Right: Broadridge Dropdown */}
-        <div style={{ flex: 1 }}>
-          <h3 style={{ textAlign: "center" }}>Broadridge Dropdown</h3>
-          <FormControl style={{ width: "100%" }}>
-            <InputLabel>Broadridge Dropdown</InputLabel>
-            <Select
-              value={broadridgeValue}
-              onChange={(e) => setBroadridgeValue(e.target.value)}
-            >
-              <MenuItem value="" disabled>
-                None
-              </MenuItem>
-              {options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-      </div>
-    </div>
+      {/* Custom Radio Buttons */}
+      <Box sx={{ marginBottom: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Custom Radio Buttons
+        </Typography>
+        <CustomRadio
+          label="Option 1"
+          value="option1"
+          checked={selectedRadio === "option1"}
+          onChange={(e) => setSelectedRadio(e.target.value)}
+        />
+        <CustomRadio
+          label="Option 2"
+          value="option2"
+          checked={selectedRadio === "option2"}
+          onChange={(e) => setSelectedRadio(e.target.value)}
+        />
+      </Box>
+
+      {/* Custom DropDown */}
+      <Box sx={{ marginBottom: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Custom DropDown
+        </Typography>
+        <CustomDropDown
+          label="Select your role"
+          value={dropdownValue}
+          onChange={handleDropdownChange}
+          options={[
+            { label: "Developer", value: "developer" },
+            { label: "Designer", value: "designer" },
+            { label: "Manager", value: "manager" },
+          ]}
+        />
+      </Box>
+
+      {/* Custom TextArea */}
+      <Box sx={{ marginBottom: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Custom Text Area
+        </Typography>
+        <CustomTextArea
+          label="Write a message"
+          placeholder="Type your message here..."
+          value={textValue}
+          onChange={handleTextAreaChange}
+        />
+      </Box>
+
+      {/* Fixed Label TextField */}
+      <Box sx={{ marginBottom: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Fixed Label TextField
+        </Typography>
+        <FixedLabelTextField
+          label="Your Name"
+          placeholder="Enter your name"
+          value={textFieldValue}
+          onChange={handleTextFieldChange}
+          width="100%"
+        />
+      </Box>
+    </Box>
   );
 };
+
+export default Display;
