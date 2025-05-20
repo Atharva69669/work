@@ -1,53 +1,61 @@
+import React from "react";
 import { styled } from "@mui/material/styles";
 import { Box, TextField, TextFieldProps } from "@mui/material";
+
+interface FixedLabelTextFieldProps extends TextFieldProps {
+  label: string;
+  width?: string | number;
+}
 
 // Styled Label
 const StyledLabel = styled("label")({
   display: "block",
   fontSize: "13px",
   fontFamily: "'Frutiger 55 Roman', sans-serif",
-  margin: "0px 0px 6px",
+  marginBottom: "6px",
   color: "#646464",
-  width: "187px",
-  height: "15px",
 });
 
-// Define Props Type
-interface FixedLabelTextFieldProps extends TextFieldProps {
-  label: string;
-}
+// Styled Input Wrapper
+const StyledBox = styled(Box)<{ width?: string | number }>(({ width }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  width: width ?? "100%",
+}));
 
-const FixedLabelTextField: React.FC<FixedLabelTextFieldProps> = ({ label, ...props }) => {
+// Main Component
+const FixedLabelTextField: React.FC<FixedLabelTextFieldProps> = ({
+  label,
+  width,
+  ...props
+}) => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-      {/* Fixed Label */}
+    <StyledBox width={width}>
       <StyledLabel>{label}</StyledLabel>
-
-      {/* Input Field with Exact 1px Border */}
       <TextField
         variant="outlined"
+        fullWidth
         sx={{
-          width: 190,
           height: 36,
           backgroundColor: "#ffffff",
-          padding: "1px",
           "& .MuiOutlinedInput-root": {
             height: "100%",
-            borderRadius: "0px", // No border-radius
+            borderRadius: 0,
             "& fieldset": {
-              border: "1px solid #646464", // Exact border override
+              border: "1px solid #646464",
             },
             "&:hover fieldset": {
-              border: "1px solid #646464", // Keeps same on hover
+              borderColor: "#646464",
             },
             "&.Mui-focused fieldset": {
-              border: "1px solid #646464", // Keeps same on focus
+              borderColor: "#646464",
             },
           },
         }}
-        {...props} // Pass all input-related props
+        {...props}
       />
-    </Box>
+    </StyledBox>
   );
 };
 
