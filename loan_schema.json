@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "properties": {
+      "homeLoan": { "type": "boolean" },
+      "carLoan": { "type": "boolean" },
+      "educationLoan": { "type": "boolean" },
+      "personalLoan": { "type": "boolean" },
+      "businessLoan": { "type": "boolean" }
+    }
+  }
+  
