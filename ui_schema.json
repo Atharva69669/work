@@ -1,0 +1,27 @@
+{
+    "type": "Group",
+    "label": "Loan Types",
+    "elements": [
+      {
+        "type": "Control",
+        "scope": "#/properties/homeLoan"
+      },
+      {
+        "type": "Control",
+        "scope": "#/properties/personalLoan"
+      },
+      {
+        "type": "Control",
+        "scope": "#/properties/carLoan"
+      },
+      {
+        "type": "Control",
+        "scope": "#/properties/educationLoan"
+      },
+      {
+        "type": "Control",
+        "scope": "#/properties/businessLoan"
+      }
+    ]
+  }
+  
