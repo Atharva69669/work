@@ -17,12 +17,13 @@ const TICK_COLOR = '#1c1c1c';
 const DISABLED_FILL = '#f5f5f5';
 const DISABLED_STROKE = '#bdbdbd';
 
+// Generates the icon for each state
 const getCheckboxIcon = (type: 'unchecked' | 'checked' | 'disabled') => (
   <SvgIcon sx={{ fontSize: BOX_SIZE }}>
     <rect
       width="24"
       height="24"
-      fill={type === 'disabled' ? DISABLED_FILL : 'none'}
+      fill={type === 'disabled' ? DISABLED_FILL : '#ffffff'} // White background when not disabled
       stroke={type === 'disabled' ? DISABLED_STROKE : BORDER_COLOR}
       strokeWidth="1"
     />
