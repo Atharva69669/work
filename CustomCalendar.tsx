@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, MouseEvent } from "react";
 import {
   Box,
   Paper,
@@ -8,13 +8,16 @@ import {
   ListItemButton,
   ListItemText,
   Button,
-  Divider,
+  Popover,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { styled } from "@mui/material/styles";
 import dayjs, { Dayjs } from "dayjs";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 // ──────────── Styled Components ────────────
 
@@ -28,14 +31,13 @@ const Container = styled(Paper)({
 
 const Sidebar = styled(Box)({
   width: 176,
-  backgroundColor: "#FFFFFF",
+  backgroundColor: "#fff",
   borderRight: "1px solid #ddd",
 });
 
 const Main = styled(Box)({
   flex: 1,
-  width: 344,
-  padding: "20px",
+  padding: 20,
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
@@ -45,20 +47,25 @@ const Footer = styled(Box)({
   display: "flex",
   justifyContent: "flex-end",
   gap: 10,
-  marginTop: 2,
+  marginTop: 16,
 });
 
 const StyledTextField = styled(TextField)({
-  width: 276,
-  height: 36,
+  width: "100%",
   marginBottom: 10,
   "& .MuiInputBase-root": {
     height: 36,
     padding: "1px 12px",
     fontSize: 15,
+    borderRadius: 0,
   },
-  "& input::placeholder": {
-    fontSize: 13,
+  "& input": {
+    padding: 0,
+    fontSize: 15,
+    "&::placeholder": {
+      fontSize: 13,
+      color: "#999",
+    },
   },
 });
 
@@ -83,85 +90,72 @@ interface PresetOption {
 
 type PresetOptions = Record<string, PresetOption>;
 
-// ──────────── Presets using Native JS Dates ────────────
+// ──────────── Presets ────────────
 
-function getPresets(): PresetOptions {
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
+const getPresets = (): PresetOptions => {
+  const today = dayjs();
+  const currentYear = today.year();
+  const currentMonth = today.month();
 
-  const startOfMonth = new Date(currentYear, currentMonth, 1);
-  const startOfLastMonth = new Date(currentYear, currentMonth - 1, 1);
-  const endOfLastMonth = new Date(currentYear, currentMonth, 0);
-  const startOfQuarter = new Date(
-    currentYear,
-    Math.floor(currentMonth / 3) * 3,
-    1
-  );
-  const startOfYear = new Date(currentYear, 0, 1);
-  const startOfLastYear = new Date(currentYear - 1, 0, 1);
-  const endOfLastYear = new Date(currentYear - 1, 11, 31);
+  const startOfMonth = dayjs(new Date(currentYear, currentMonth, 1));
+  const startOfLastMonth = dayjs(new Date(currentYear, currentMonth - 1, 1));
+  const endOfLastMonth = dayjs(new Date(currentYear, currentMonth, 0));
+  const startOfQuarter = dayjs(new Date(currentYear, Math.floor(currentMonth / 3) * 3, 1));
+  const startOfYear = dayjs(new Date(currentYear, 0, 1));
+  const startOfLastYear = dayjs(new Date(currentYear - 1, 0, 1));
+  const endOfLastYear = dayjs(new Date(currentYear - 1, 11, 31));
 
   return {
     thisMonth: {
       label: "This Month",
-      range: {
-        startDate: dayjs(startOfMonth),
-        endDate: dayjs(today),
-      },
+      range: { startDate: startOfMonth, endDate: today },
     },
     lastMonth: {
       label: "Last Month",
-      range: {
-        startDate: dayjs(startOfLastMonth),
-        endDate: dayjs(endOfLastMonth),
-      },
+      range: { startDate: startOfLastMonth, endDate: endOfLastMonth },
     },
     quarterToDate: {
       label: "Quarter To Date",
-      range: {
-        startDate: dayjs(startOfQuarter),
-        endDate: dayjs(today),
-      },
+      range: { startDate: startOfQuarter, endDate: today },
     },
     yearToDate: {
       label: "Year To Date",
-      range: {
-        startDate: dayjs(startOfYear),
-        endDate: dayjs(today),
-      },
+      range: { startDate: startOfYear, endDate: today },
     },
     lastYear: {
       label: "Last Year",
-      range: {
-        startDate: dayjs(startOfLastYear),
-        endDate: dayjs(endOfLastYear),
-      },
+      range: { startDate: startOfLastYear, endDate: endOfLastYear },
     },
-    customDates: {
-      label: "Custom Dates",
-    },
+    customDates: { label: "Custom Dates" },
   };
-}
+};
 
 // ──────────── Main Component ────────────
 
 export default function CustomCalendar() {
   const presetOptions = getPresets();
 
-  const [selectedOption, setSelectedOption] = useState<keyof PresetOptions>(
-    "customDates"
-  );
+  // State
+  const [selectedOption, setSelectedOption] = useState<keyof typeof presetOptions>("customDates");
   const [range, setRange] = useState<DateRange>({
     startDate: dayjs(),
     endDate: dayjs(),
   });
   const [customDates, setCustomDates] = useState<Dayjs[]>([]);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleOptionClick = (key: keyof PresetOptions) => {
+  const open = Boolean(anchorEl);
+
+  // Handlers
+  const handleOpenCalendar = (event: MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleCloseCalendar = () => setAnchorEl(null);
+
+  const handleOptionClick = (key: keyof typeof presetOptions) => {
     setSelectedOption(key);
     if (presetOptions[key].range) {
-      setRange(presetOptions[key].range as DateRange);
+      setRange(presetOptions[key].range);
+      setCustomDates([]);
     } else {
       setCustomDates([]);
     }
@@ -170,19 +164,22 @@ export default function CustomCalendar() {
   const handleDateClick = (date: Dayjs | null) => {
     if (!date || selectedOption !== "customDates") return;
 
-    const exists = customDates.some((d) => d.isSame(date, "day"));
-    if (exists) {
-      setCustomDates(customDates.filter((d) => !d.isSame(date, "day")));
-    } else {
-      setCustomDates([...customDates, date]);
-    }
+    setCustomDates((prev) =>
+      prev.some((d) => d.isSame(date, "day"))
+        ? prev.filter((d) => !d.isSame(date, "day"))
+        : [...prev, date]
+    );
   };
 
   const handleApply = () => {
     if (selectedOption === "customDates") {
       console.log(
         "Selected Dates:",
-        customDates.map((d) => d.format("MM/DD/YYYY")).join(", ")
+        customDates
+          .slice()
+          .sort((a, b) => a.unix() - b.unix())
+          .map((d) => d.format("MM/DD/YYYY"))
+          .join(", ")
       );
     } else {
       console.log(
@@ -192,16 +189,19 @@ export default function CustomCalendar() {
         range.endDate.format("MM/DD/YYYY")
       );
     }
+    handleCloseCalendar();
   };
 
+  // Render the date fields based on selection
   const renderFields = () => {
     if (selectedOption === "customDates") {
       return (
         <>
           <StyledLabel>Selected Dates</StyledLabel>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body2" color="textSecondary" sx={{ minHeight: 24 }}>
             {customDates.length > 0
               ? customDates
+                  .slice()
                   .sort((a, b) => a.unix() - b.unix())
                   .map((d) => d.format("MM/DD/YYYY"))
                   .join(", ")
@@ -209,130 +209,145 @@ export default function CustomCalendar() {
           </Typography>
         </>
       );
-    } else {
-      return (
-        <>
-          <StyledLabel>From</StyledLabel>
-          <StyledTextField
-            value={range.startDate.format("MM/DD/YYYY")}
-            size="small"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-          <StyledLabel>To</StyledLabel>
-          <StyledTextField
-            value={range.endDate.format("MM/DD/YYYY")}
-            size="small"
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-        </>
-      );
     }
+
+    return (
+      <>
+        <StyledLabel>From</StyledLabel>
+        <StyledTextField
+          value={range.startDate.format("MM/DD/YYYY")}
+          size="small"
+          InputProps={{ readOnly: true }}
+        />
+        <StyledLabel>To</StyledLabel>
+        <StyledTextField
+          value={range.endDate.format("MM/DD/YYYY")}
+          size="small"
+          InputProps={{ readOnly: true }}
+        />
+      </>
+    );
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Container>
-        <Sidebar>
-          <List dense disablePadding>
-            {Object.entries(presetOptions).map(([key, { label }]) => (
-              <ListItemButton
-                key={key}
-                selected={selectedOption === key}
-                onClick={() => handleOptionClick(key as keyof PresetOptions)}
-                sx={{
-                  px: 2,
-                  height: 48,
-                  "& .MuiListItemText-primary": { fontSize: "15px" },
-                  "&.Mui-selected": { backgroundColor: "#d3eaf3" },
-                }}
-              >
-                <ListItemText primary={label} />
-              </ListItemButton>
-            ))}
-          </List>
-        </Sidebar>
+      <Box sx={{ mb: 1 }}>
+        <TextField
+          placeholder="MM/DD/YYYY-MM/DD/YYYY"
+          inputRef={inputRef}
+          onClick={handleOpenCalendar}
+          value={
+            selectedOption === "customDates"
+              ? customDates
+                  .slice()
+                  .sort((a, b) => a.unix() - b.unix())
+                  .map((d) => d.format("MM/DD/YYYY"))
+                  .join(", ")
+              : `${range.startDate.format("MM/DD/YYYY")} - ${range.endDate.format("MM/DD/YYYY")}`
+          }
+          InputProps={{
+            readOnly: true,
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleOpenCalendar}>
+                  <CalendarMonthIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+            sx: {
+              height: 36,
+              padding: "1px 12px",
+              fontSize: 15,
+              borderRadius: 0,
+            },
+          }}
+          inputProps={{
+            sx: {
+              fontSize: 15,
+              "&::placeholder": {
+                fontSize: 13,
+                color: "#1c1c1c",
+              },
+            },
+          }}
+          sx={{
+            width: 250,
+            height: 36,
+            mb: 1,
+            cursor: "pointer",
+          }}
+        />
+      </Box>
 
-        <Main>
-          <Box>
-            {renderFields()}
-            <StaticDatePicker
-              displayStaticWrapperAs="desktop"
-              value={null}
-              onChange={handleDateClick}
-              sx={{ width: 318, height: 300, p: 0 }}
-              slotProps={{
-                day: {
-                  sx: {
-                    width: 36,
-                    height: 36,
-                    fontSize: 14,
-                    // Custom highlight color via &.Mui-selected handled below
-                  },
-                  selected: (day: Dayjs) => {
-                    if (selectedOption === "customDates") {
-                      return customDates.some((d) => d.isSame(day, "day"));
-                    } else {
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleCloseCalendar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        PaperProps={{ sx: { overflow: "hidden" } }}
+      >
+        <Container>
+          <Sidebar>
+            <List dense disablePadding>
+              {Object.entries(presetOptions).map(([key, { label }]) => (
+                <ListItemButton
+                  key={key}
+                  selected={selectedOption === key}
+                  onClick={() => handleOptionClick(key as keyof typeof presetOptions)}
+                  sx={{
+                    px: 2,
+                    height: 48,
+                    fontSize: 15,
+                    "&.Mui-selected": { backgroundColor: "#d3eaf3" },
+                  }}
+                >
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Sidebar>
+
+          <Main>
+            <Box>
+              {renderFields()}
+
+              <StaticDatePicker
+                displayStaticWrapperAs="desktop"
+                value={null}
+                onChange={handleDateClick}
+                sx={{ width: 318, height: 300, p: 0 }}
+                slotProps={{
+                  day: {
+                    sx: { width: 36, height: 36, fontSize: 14 },
+                    selected: (day: Dayjs) => {
+                      if (selectedOption === "customDates") {
+                        return customDates.some((d) => d.isSame(day, "day"));
+                      }
                       return (
                         day.isSame(range.startDate, "day") ||
                         day.isSame(range.endDate, "day") ||
-                        (day.isAfter(range.startDate, "day") &&
-                          day.isBefore(range.endDate, "day"))
+                        (day.isAfter(range.startDate, "day") && day.isBefore(range.endDate, "day"))
                       );
-                    }
-                  },
-                },
-                daysHeader: {
-                  sx: {
-                    height: 55,
-                    minHeight: 55,
-                    maxHeight: 55,
-                    width: 267,
-                    "& .MuiTypography-root": {
-                      fontSize: 14,
                     },
+                    onClick: (e: MouseEvent<HTMLElement>, day: Dayjs) => handleDateClick(day),
                   },
-                },
-              }}
-            />
-
-            <Box mt={2}>
-              <Divider />
+                }}
+                showDaysOutsideCurrentMonth
+                disableHighlightToday={false}
+              />
             </Box>
-          </Box>
 
-          <Footer>
-            <Button
-              variant="contained"
-              onClick={() => handleOptionClick("customDates")}
-              sx={{
-                borderRadius: "none",
-                width: 84,
-                height: 36,
-                backgroundColor: "#ffeabd",
-                color: "#1c1c1c",
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleApply}
-              sx={{
-                borderRadius: "none",
-                width: 84,
-                height: 36,
-                backgroundColor: "#1c1c1c",
-              }}
-            >
-              Apply
-            </Button>
-          </Footer>
-        </Main>
-      </Container>
+            <Footer>
+              <Button onClick={handleCloseCalendar} variant="outlined" size="small">
+                Cancel
+              </Button>
+              <Button onClick={handleApply} variant="contained" size="small">
+                Apply
+              </Button>
+            </Footer>
+          </Main>
+        </Container>
+      </Popover>
     </LocalizationProvider>
   );
 }
